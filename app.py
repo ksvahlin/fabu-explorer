@@ -5,7 +5,7 @@ st.set_page_config(page_title="FABU Data Explorer", layout="wide")
 st.title("FABU Data Explorer")
 
 # Load the CSV that lives in the repo
-df = pd.read_csv("data/ks_fabu.csv")
+df = pd.read_csv("ks_fabu.csv")
 
 # Basic interactivity
 with st.expander("Filters", expanded=True):
