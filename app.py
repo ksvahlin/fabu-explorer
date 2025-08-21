@@ -74,6 +74,12 @@ view = df.copy()
 if sel_collections:
     view = view[view["Master_Collection"].astype(str).isin(sel_collections)]
 
+if sel_depts:
+    view = view[view["Department_Number"].astype(str).isin(sel_depts)]
+
+if sel_fabrics:
+    view = view[view["Fabric"].astype(str).isin(sel_fabrics)]
+
 if q_global:
     sub = view[show_cols] if show_cols else view
     mask = sub.astype(str).apply(lambda s: s.str.contains(q_global, case=False, na=False))
