@@ -2,10 +2,10 @@ import pandas as pd
 import streamlit as st
 
 st.set_page_config(page_title="FABU Data Explorer", layout="wide")
-st.title("FABU Data Explorer")
+st.title("Collection Fabric Availability")
 
 # Load the CSV that lives in the repo
-df = pd.read_csv("ks_fabu.csv")
+df = pd.read_csv("Collection Fabric Availability.csv")
 
 # Basic interactivity
 with st.expander("Filters", expanded=True):
