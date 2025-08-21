@@ -27,6 +27,30 @@ if "Master_Collection" in df.columns:
 else:
     sel_collections = []
 
+# Multi-select like Excel filter for Department_Number
+if "Department_Number" in df.columns:
+    depts = sorted(df["Department_Number"].dropna().astype(str).unique())
+    sel_depts = st.sidebar.multiselect(
+        "Department_Number",
+        options=depts,
+        default=[],
+        help="Pick one or more Departments to include"
+    )
+else:
+    sel_depts = []
+
+# Multi-select like Excel filter for Fabric
+if "Fabric" in df.columns:
+    fabrics = sorted(df["Fabric"].dropna().astype(str).unique())
+    sel_fabrics = st.sidebar.multiselect(
+        "Fabric",
+        options=fabrics,
+        default=[],
+        help="Pick one or more Fabrics to include"
+    )
+else:
+    sel_fabrics = []
+
 # Global quick search (across visible columns)
 q_global = st.sidebar.text_input("Quick contains (all visible columns)", "")
 
