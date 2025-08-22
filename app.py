@@ -68,6 +68,10 @@ if st.sidebar.button("Clear filters"):
     show_cols = list(df.columns)
     st.experimental_rerun()
 
+if st.sidebar.button("Reload data"):
+    st.cache_data.clear()
+    st.experimental_rerun()
+
 # ---------------- Apply filters ----------------
 view = df.copy()
 
