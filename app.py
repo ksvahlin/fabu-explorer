@@ -1,16 +1,16 @@
 import pandas as pd
 import streamlit as st
+import os
 
 st.set_page_config(page_title="FABU Data Explorer", layout="wide")
 st.title("Collection Fabric Availability")
 
-CSV_PATH = "Collection Fabric Availability.csv"
-
 @st.cache_data(show_spinner=False)
-def load_csv(path: str) -> pd.DataFrame:
+def load_csv(path: str, mtime: float):
     return pd.read_csv(path)
 
-df = load_csv(CSV_PATH)
+CSV_PATH = "Collection Fabric Availability.csv"
+df = load_csv(CSV_PATH, os.path.getmtime(CSV_PATH))
 
 # ---------------- Sidebar controls ----------------
 st.sidebar.header("Filters")
@@ -70,7 +70,7 @@ if st.sidebar.button("Clear filters"):
 
 if st.sidebar.button("Reload data"):
     st.cache_data.clear()
-    st.experimental_rerun()
+    st.rerun()
 
 # ---------------- Apply filters ----------------
 view = df.copy()
