@@ -15,105 +15,44 @@ df = load_csv(CSV_PATH, os.path.getmtime(CSV_PATH))
 # ---------------- Sidebar controls ----------------
 st.sidebar.header("Filters")
 
-# Multi-select like Excel filter for Master_Collection
-if "Master_Collection" in df.columns:
-    collections = sorted(df["Master_Collection"].dropna().astype(str).unique())
-    sel_collections = st.sidebar.multiselect(
-        "Master_Collection",
-        options=collections,
-        default=[],
-        help="Pick one or more collections to include"
-    )
-else:
-    sel_collections = []
+# Master_Collection
+collections = sorted(df.get("Master_Collection", pd.Series(dtype=str)).dropna().astype(str).unique())
+sel_collections = st.sidebar.multiselect("Master_Collection", options=collections, default=[])
 
-# Multi-select like Excel filter for Department_Number
-if "Department_Number" in df.columns:
-    depts = sorted(df["Department_Number"].dropna().astype(str).unique())
-    sel_depts = st.sidebar.multiselect(
-        "Department_Number",
-        options=depts,
-        default=[],
-        help="Pick one or more Departments to include"
-    )
-else:
-    sel_depts = []
+# Department_Number
+depts = sorted(df.get("Department_Number", pd.Series(dtype=str)).dropna().astype(str).unique())
+sel_depts = st.sidebar.multiselect("Department_Number", options=depts, default=[])
 
-# Multi-select like Excel filter for Fabric
-if "Fabric" in df.columns:
-    fabrics = sorted(df["Fabric"].dropna().astype(str).unique())
-    sel_fabrics = st.sidebar.multiselect(
-        "Fabric",
-        options=fabrics,
-        default=[],
-        help="Pick one or more Fabrics to include"
-    )
-else:
-    sel_fabrics = []
+# Fabric
+fabrics = sorted(df.get("Fabric", pd.Series(dtype=str)).dropna().astype(str).unique())
+sel_fabrics = st.sidebar.multiselect("Fabric", options=fabrics, default=[])
 
-# Multi-select like Excel filter for Fabric
-if "Color_Code" in df.columns:
-    colors = sorted(df["Color_Code"].dropna().astype(str).unique())
-    sel_colors = st.sidebar.multiselect(
-        "Color_Code",
-        options=fabrics,
-        default=[],
-        help="Pick one or more Color_Codes to include"
-    )
-else:
-    sel_colors = []
+# Color_Code  (fixed options=colors)
+colors = sorted(df.get("Color_Code", pd.Series(dtype=str)).dropna().astype(str).unique())
+sel_colors = st.sidebar.multiselect("Color_Code", options=colors, default=[])
 
-# Global quick search (across visible columns)
-q_global = st.sidebar.text_input("Quick contains (all visible columns)", "")
-
-# Column chooser
-# show_cols = st.sidebar.multiselect(
-#     "Columns to show",
-#     options=list(df.columns),
-#     default=list(df.columns),
-# )
-
-# Clear button
+# Clear / Reload
 if st.sidebar.button("Clear filters"):
-    sel_collections = []
-    q_global = ""
-    # show_cols = list(df.columns)
-    st.experimental_rerun()
+    st.cache_data.clear()
+    st.rerun()   # <- fixed
 
-if st.sidebar.button("Reload data"):
+if st.sidebar.button("Reload data", type="primary"):
     st.cache_data.clear()
     st.rerun()
 
 # ---------------- Apply filters ----------------
 view = df.copy()
-
 if sel_collections:
     view = view[view["Master_Collection"].astype(str).isin(sel_collections)]
-
 if sel_depts:
     view = view[view["Department_Number"].astype(str).isin(sel_depts)]
-
 if sel_fabrics:
     view = view[view["Fabric"].astype(str).isin(sel_fabrics)]
-
 if sel_colors:
     view = view[view["Color_Code"].astype(str).isin(sel_colors)]
-
-# if q_global:
-#     # sub = view[show_cols] if show_cols else view
-#     # mask = sub.astype(str).apply(lambda s: s.str.contains(q_global, case=False, na=False))
-#     # view = view[mask.any(axis=1)]
-
-# if show_cols:
-#     view = view[show_cols]
 
 # ---------------- Output ----------------
 st.write(f"Rows: {len(view):,} | Columns: {len(view.columns)}")
 st.dataframe(view, use_container_width=True, height=560)
-
-st.download_button(
-    "Download filtered CSV",
-    view.to_csv(index=False).encode("utf-8"),
-    "export.csv",
-    "text/csv"
-)
+st.download_button("Download filtered CSV", view.to_csv(index=False).encode("utf-8"),
+                   "export.csv", "text/csv")
