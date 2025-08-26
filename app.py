@@ -55,11 +55,11 @@ else:
 q_global = st.sidebar.text_input("Quick contains (all visible columns)", "")
 
 # Column chooser
-show_cols = st.sidebar.multiselect(
-    "Columns to show",
-    options=list(df.columns),
-    default=list(df.columns),
-)
+# show_cols = st.sidebar.multiselect(
+#     "Columns to show",
+#     options=list(df.columns),
+#     default=list(df.columns),
+# )
 
 # Clear button
 if st.sidebar.button("Clear filters"):
@@ -89,8 +89,8 @@ if q_global:
     mask = sub.astype(str).apply(lambda s: s.str.contains(q_global, case=False, na=False))
     view = view[mask.any(axis=1)]
 
-if show_cols:
-    view = view[show_cols]
+# if show_cols:
+#     view = view[show_cols]
 
 # ---------------- Output ----------------
 st.write(f"Rows: {len(view):,} | Columns: {len(view.columns)}")
