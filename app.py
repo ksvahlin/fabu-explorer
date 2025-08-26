@@ -51,6 +51,18 @@ if "Fabric" in df.columns:
 else:
     sel_fabrics = []
 
+# Multi-select like Excel filter for Fabric
+if "Color_Code" in df.columns:
+    colors = sorted(df["Color_Code"].dropna().astype(str).unique())
+    sel_colors = st.sidebar.multiselect(
+        "Color_Code",
+        options=fabrics,
+        default=[],
+        help="Pick one or more Color_Codes to include"
+    )
+else:
+    sel_colors = []
+
 # Global quick search (across visible columns)
 q_global = st.sidebar.text_input("Quick contains (all visible columns)", "")
 
@@ -65,7 +77,7 @@ q_global = st.sidebar.text_input("Quick contains (all visible columns)", "")
 if st.sidebar.button("Clear filters"):
     sel_collections = []
     q_global = ""
-    show_cols = list(df.columns)
+    # show_cols = list(df.columns)
     st.experimental_rerun()
 
 if st.sidebar.button("Reload data"):
@@ -84,10 +96,13 @@ if sel_depts:
 if sel_fabrics:
     view = view[view["Fabric"].astype(str).isin(sel_fabrics)]
 
-if q_global:
-    sub = view[show_cols] if show_cols else view
-    mask = sub.astype(str).apply(lambda s: s.str.contains(q_global, case=False, na=False))
-    view = view[mask.any(axis=1)]
+if sel_colors:
+    view = view[view["Color_Code"].astype(str).isin(sel_colors)]
+
+# if q_global:
+#     # sub = view[show_cols] if show_cols else view
+#     # mask = sub.astype(str).apply(lambda s: s.str.contains(q_global, case=False, na=False))
+#     # view = view[mask.any(axis=1)]
 
 # if show_cols:
 #     view = view[show_cols]
